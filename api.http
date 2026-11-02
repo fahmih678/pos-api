@@ -1,0 +1,159 @@
+### Global Variables
+@baseUrl = http://localhost:8000/api
+@contentType = application/json
+@accept = application/json
+
+# ==============================================================================
+# FASE 1: AUTHENTICATION & PROFILE
+# ==============================================================================
+
+### 1.1 Login sebagai Admin
+# @name loginAdmin
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+Accept: {{accept}}
+
+{
+    "email": "admin@pos.test",
+    "password": "password",
+    "device_name": "admin-macbook"
+}
+
+### Simpan token Admin secara otomatis
+@adminToken = {{loginAdmin.response.body.data.token}}
+
+### 1.2 Login sebagai Kasir
+# @name loginCashier
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+Accept: {{accept}}
+
+{
+    "email": "cashier@pos.test",
+    "password": "password",
+    "device_name": "kasir-terminal-1"
+}
+
+### Simpan token Kasir secara otomatis
+@cashierToken = {{loginCashier.response.body.data.token}}
+
+### 1.3 Lihat Profil Sendiri (/api/me)
+GET {{baseUrl}}/me
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+### 1.4 Logout Kasir (Revoke Token)
+POST {{baseUrl}}/logout
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+
+# ==============================================================================
+# FASE 2: MANAJEMEN KATEGORI & KATALOG PRODUK
+# ==============================================================================
+
+### 2.1 Tambah Kategori Baru (Admin / Manager Only)
+# @name createCategory
+POST {{baseUrl}}/categories
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+{
+    "name": "Minuman Kopi",
+    "description": "Aneka varian olahan biji kopi espresso dan susu"
+}
+
+@categoryId = {{createCategory.response.body.data.id}}
+
+### 2.2 List Semua Kategori
+GET {{baseUrl}}/categories
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+### 2.3 Tambah Produk Baru (Admin / Manager Only)
+# @name createProduct
+POST {{baseUrl}}/products
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+{
+    "category_id": 1,
+    "sku": "PRD-KOPI-001",
+    "barcode": "8991234567890",
+    "name": "Kopi Susu Gula Aren 250ml",
+    "description": "Espresso dengan susu segar dan gula aren premium",
+    "cost_price": 8000,
+    "selling_price": 18000,
+    "stock": 50,
+    "alert_stock_threshold": 10
+}
+
+@productId = {{createProduct.response.body.data.id}}
+
+### 2.4 Kasir Melihat Daftar Produk (Notice: cost_price disembunyikan dari kasir)
+GET {{baseUrl}}/products
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+### 2.5 Admin Melihat Daftar Produk (Notice: cost_price terlihat)
+GET {{baseUrl}}/products
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+### 2.6 Kasir Mencari Produk via Scanner Barcode atau Nama
+GET {{baseUrl}}/products?q=8991234567890
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+### 2.7 Cek Produk dengan Stok Menipis (Low Stock Warning)
+GET {{baseUrl}}/products/low-stock
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+
+# ==============================================================================
+# FASE 3: MANAJEMEN MUTASI STOK & AUDIT TRAIL
+# ==============================================================================
+
+### 3.1 Restock Barang Masuk dari Supplier (Admin / Manager Only)
+POST {{baseUrl}}/products/1/stock-adjustments
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+{
+    "type": "restock",
+    "quantity": 25,
+    "notes": "Penerimaan barang dari Supplier CV Berkah Kopi"
+}
+
+### 3.2 Catat Barang Rusak / Pecah (Damage)
+POST {{baseUrl}}/products/1/stock-adjustments
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+{
+    "type": "damage",
+    "quantity": 2,
+    "notes": "Botol pecah saat penataan di display depan"
+}
+
+### 3.3 Penyesuaian Stok Fisik / Stok Opname (Adjustment)
+POST {{baseUrl}}/products/1/stock-adjustments
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+{
+    "type": "adjustment",
+    "quantity": 70,
+    "notes": "Hasil rekonsiliasi stok opname mingguan"
+}
+
+### 3.4 Lihat Kartu Riwayat Mutasi Stok Produk (Stock Card Audit Trail)
+GET {{baseUrl}}/products/1/stock-movements
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}

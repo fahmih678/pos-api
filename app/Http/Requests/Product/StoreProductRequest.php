@@ -34,7 +34,7 @@ class StoreProductRequest extends FormRequest
             'selling_price' => ['required', 'numeric', 'min:0', 'gte:cost_price'],
             'stock' => ['nullable', 'integer', 'min:0'],
             'alert_stock_threshold' => ['nullable', 'integer', 'min:0'],
-            'is_active' => ['nullable', 'boolean']
+            'is_active' => ['nullable', 'boolean'],
         ];
     }
 }

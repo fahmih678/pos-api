@@ -21,8 +21,8 @@ class CategoryController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $query = Category::query()
-            ->when($request->filled('is_active'), fn($q) => $q->where('is_active', $request->boolean('is_active')))
-            ->when($request->filled('q'), fn($q) => $q->where('name', 'like', '%' . $request->string('q') . '%'))
+            ->when($request->filled('is_active'), fn ($q) => $q->where('is_active', $request->boolean('is_active')))
+            ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%'.$request->string('q').'%'))
             ->withCount('products')
             ->orderBy('name');
 
@@ -41,6 +41,7 @@ class CategoryController extends Controller
             $data['slug'] = Str::slug($data['name']);
         }
         $category = Category::create($data);
+
         return response()->json([
             'message' => 'Kategori berhasil ditambahkan.',
             'data' => new CategoryResource($category),
@@ -63,6 +64,7 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
         $category->update($request->validated());
+
         return response()->json([
             'message' => 'Kategori berhasil diperbarui.',
             'data' => new CategoryResource($category),
@@ -76,6 +78,7 @@ class CategoryController extends Controller
     {
         Gate::authorize('delete', $category);
         $category->delete();
+
         return response()->json([
             'message' => 'Kategori berhasil dihapus.',
         ]);
