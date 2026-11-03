@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\StockAdjustmentController;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Inventory Movements & Adjustments
     Route::get('/products/{product}/stock-movements', [StockAdjustmentController::class, 'index']);
     Route::post('/products/{product}/stock-adjustments', [StockAdjustmentController::class, 'store']);
+
+    // POS Orders & Checkout
+    Route::post('/checkout', [OrderController::class, 'checkout']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{order}', [OrderController::class, 'show']);
 });

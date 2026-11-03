@@ -1,5 +1,5 @@
 ### Global Variables
-@baseUrl = http://localhost:8000/api
+@baseUrl = https://pos-api.test/api
 @contentType = application/json
 @accept = application/json
 
@@ -157,3 +157,45 @@ Authorization: Bearer {{adminToken}}
 GET {{baseUrl}}/products/1/stock-movements
 Accept: {{accept}}
 Authorization: Bearer {{adminToken}}
+
+
+# ==============================================================================
+# FASE 4: TRANSAKSI PENJUALAN & CHECKOUT KASIR
+# ==============================================================================
+
+### 4.1 Kasir Memproses Checkout Penjualan Multi-Item
+# @name checkoutOrder
+POST {{baseUrl}}/checkout
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+{
+    "customer_name": "Ahmad Dani",
+    "discount_amount": 2000,
+    "tax_amount": 1000,
+    "notes": "Pesanan Takeaway",
+    "items": [
+        {
+            "product_id": 1,
+            "quantity": 2
+        }
+    ]
+}
+
+@orderId = {{checkoutOrder.response.body.data.id}}
+
+### 4.2 Melihat Riwayat Transaksi Penjualan (Kasir & Admin)
+GET {{baseUrl}}/orders
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+### 4.3 Filter Riwayat Transaksi Berdasarkan Status / Nomor Faktur
+GET {{baseUrl}}/orders?status=completed&invoice_number=INV
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+### 4.4 Melihat Detail Satu Faktur Penjualan (Struk Kasir)
+GET {{baseUrl}}/orders/{{orderId}}
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
