@@ -199,3 +199,40 @@ Authorization: Bearer {{cashierToken}}
 GET {{baseUrl}}/orders/{{orderId}}
 Accept: {{accept}}
 Authorization: Bearer {{cashierToken}}
+
+
+# ==============================================================================
+# FASE 5: PEMBAYARAN KASIR & PEMBATALAN PESANAN (VOID)
+# ==============================================================================
+
+### 5.1 Kasir Memproses Pembayaran Tunai (Cash)
+POST {{baseUrl}}/orders/{{orderId}}/pay
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+{
+    "payment_method": "cash",
+    "amount_tendered": 50000
+}
+
+### 5.2 Kasir Memproses Pembayaran Non-Tunai (QRIS)
+POST {{baseUrl}}/orders/{{orderId}}/pay
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{cashierToken}}
+
+{
+    "payment_method": "qris",
+    "reference_number": "QRIS-BCA-12345678"
+}
+
+### 5.3 Manager Membatalkan Pesanan (Void) & Mengembalikan Stok Otomatis
+POST {{baseUrl}}/orders/{{orderId}}/void
+Content-Type: {{contentType}}
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+{
+    "reason": "Pelanggan salah memilih pesanan dan ingin refund"
+}

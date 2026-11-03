@@ -30,4 +30,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/checkout', [OrderController::class, 'checkout']);
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
+    Route::post('/orders/{order}/pay', [OrderController::class, 'pay']);
+    Route::post('/orders/{order}/void', [OrderController::class, 'void']);
 });

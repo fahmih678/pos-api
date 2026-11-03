@@ -3,9 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Order\ProcessCheckoutAction;
+use App\Actions\Order\VoidOrderAction;
+use App\Actions\Payment\ProcessPaymentAction;
+use App\Enums\PaymentMethod;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\CheckoutRequest;
+use App\Http\Requests\Order\VoidOrderRequest;
+use App\Http\Requests\Payment\ProcessPaymentRequest;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\PaymentResource;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -59,5 +65,43 @@ class OrderController extends Controller
             'message' => 'Transaksi penjualan berhasil diproses.',
             'data' => new OrderResource($order),
         ], 201);
+    }
+
+    public function pay(
+        ProcessPaymentRequest $request,
+        Order $order,
+        ProcessPaymentAction $action
+    ): JsonResponse {
+        $payment = $action->execute(
+            order: $order,
+            method: $request->enum('payment_method', PaymentMethod::class),
+            amountTendered: (float) $request->input('amount_tendered', 0),
+            referenceNumber: $request->input('reference_number'),
+        );
+
+        return response()->json([
+            'message' => 'Pembayaran berhasil diproses.',
+            'data' => new PaymentResource($payment),
+        ], 201);
+    }
+
+    /**
+     * Membatalkan pesanan (Void) & mengembalikan stok barang (Manager/Admin Only).
+     */
+    public function void(
+        VoidOrderRequest $request,
+        Order $order,
+        VoidOrderAction $action
+    ): JsonResponse {
+        $voidedOrder = $action->execute(
+            order: $order,
+            manager: $request->user(),
+            reason: $request->input('reason'),
+        );
+
+        return response()->json([
+            'message' => 'Pesanan berhasil dibatalkan (Void) dan stok telah dikembalikan.',
+            'data' => new OrderResource($voidedOrder),
+        ]);
     }
 }

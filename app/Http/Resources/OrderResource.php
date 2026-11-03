@@ -31,6 +31,7 @@ class OrderResource extends JsonResource
             ],
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
             'created_at' => $this->created_at?->toIso8601String(),
+            'payments' => PaymentResource::collection($this->whenLoaded('payments')),
         ];
     }
 }
