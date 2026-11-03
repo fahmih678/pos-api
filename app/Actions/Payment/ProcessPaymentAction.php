@@ -17,6 +17,14 @@ class ProcessPaymentAction
         float $amountTendered = 0,
         ?string $referenceNumber = null,
     ): Payment {
+
+        // Cegah double payment jika order sudah pernah dibayar sukses
+        if ($order->payments()->where('status', PaymentStatus::Success)->exists()) {
+            throw ValidationException::withMessages([
+                'order' => ['Pesanan ini sudah dibayar sebelumnya.'],
+            ]);
+        }
+
         if ($order->status === OrderStatus::Voided) {
             throw ValidationException::withMessages([
                 'order' => ['Tidak dapat memproses pembayaran untuk pesanan yang sudah dibatalkan (void).'],
@@ -27,7 +35,7 @@ class ProcessPaymentAction
         if ($method === PaymentMethod::Cash) {
             if ($amountTendered < $grandTotal) {
                 throw ValidationException::withMessages([
-                    'amount_tendered' => ['Uang tunai kurang. Total Tagihan: Rp '.number_format($grandTotal, 0, ',', '.').'.'],
+                    'amount_tendered' => ['Uang tunai kurang. Total Tagihan: Rp ' . number_format($grandTotal, 0, ',', '.') . '.'],
                 ]);
             }
             $changeDue = $amountTendered - $grandTotal;
