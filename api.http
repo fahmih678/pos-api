@@ -236,3 +236,23 @@ Authorization: Bearer {{adminToken}}
 {
     "reason": "Pelanggan salah memilih pesanan dan ingin refund"
 }
+
+
+# ==============================================================================
+# FASE 6: LAPORAN PENJUALAN & ANALISIS BISNIS (ADMIN & MANAGER ONLY)
+# ==============================================================================
+
+### 6.1 Ringkasan Omzet, HPP, & Laba Kotor Toko Hari Ini
+GET {{baseUrl}}/reports/sales-summary
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+### 6.2 Ringkasan Penjualan dengan Filter Rentang Tanggal
+GET {{baseUrl}}/reports/sales-summary?start_date=2026-11-01 00:00:00&end_date=2026-11-30 23:59:59
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
+
+### 6.3 Daftar Produk Terlaris (Top Selling Products)
+GET {{baseUrl}}/reports/top-products?limit=5
+Accept: {{accept}}
+Authorization: Bearer {{adminToken}}
