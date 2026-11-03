@@ -16,7 +16,7 @@ Accept: application/json
     "device_name": "admin-macbook"
 }
 
-### Simpan token Admin secara otomatis
+###
 @adminToken = {{loginAdmin.response.body.data.token}}
 
 ### 1.2 Login sebagai Kasir
@@ -31,7 +31,7 @@ Accept: application/json
     "device_name": "kasir-terminal-1"
 }
 
-### Simpan token Kasir secara otomatis
+###
 @cashierToken = {{loginCashier.response.body.data.token}}
 
 ### 1.3 Lihat Profil Sendiri (/api/me)
@@ -57,10 +57,11 @@ Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 {
-    "name": "Minuman Kopi",
+    "name": "Minuman Kopi Spesial",
     "description": "Aneka varian olahan biji kopi espresso dan susu"
 }
 
+###
 @categoryId = {{createCategory.response.body.data.id}}
 
 ### 2.2 List Semua Kategori
@@ -77,16 +78,17 @@ Authorization: Bearer {{adminToken}}
 
 {
     "category_id": 1,
-    "sku": "PRD-KOPI-001",
-    "barcode": "8991234567890",
-    "name": "Kopi Susu Gula Aren 250ml",
-    "description": "Espresso dengan susu segar dan gula aren premium",
-    "cost_price": 8000,
-    "selling_price": 18000,
+    "sku": "PRD-KOPI-999",
+    "barcode": "8991234567999",
+    "name": "Kopi Susu Caramel 250ml",
+    "description": "Espresso dengan saus caramel dan susu segar",
+    "cost_price": 9000,
+    "selling_price": 20000,
     "stock": 50,
     "alert_stock_threshold": 10
 }
 
+###
 @productId = {{createProduct.response.body.data.id}}
 
 ### 2.4 Kasir Melihat Daftar Produk (Notice: cost_price disembunyikan dari kasir)
@@ -184,6 +186,7 @@ Authorization: Bearer {{cashierToken}}
     ]
 }
 
+###
 @orderId = {{checkoutOrder.response.body.data.id}}
 
 ### 4.2 Melihat Riwayat Transaksi Penjualan (Kasir & Admin)
