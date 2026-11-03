@@ -1,7 +1,4 @@
-### Global Variables
 @baseUrl = https://pos-api.test/api
-@contentType = application/json
-@accept = application/json
 
 # ==============================================================================
 # FASE 1: AUTHENTICATION & PROFILE
@@ -10,8 +7,8 @@
 ### 1.1 Login sebagai Admin
 # @name loginAdmin
 POST {{baseUrl}}/login
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 
 {
     "email": "admin@pos.test",
@@ -25,8 +22,8 @@ Accept: {{accept}}
 ### 1.2 Login sebagai Kasir
 # @name loginCashier
 POST {{baseUrl}}/login
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 
 {
     "email": "cashier@pos.test",
@@ -39,12 +36,12 @@ Accept: {{accept}}
 
 ### 1.3 Lihat Profil Sendiri (/api/me)
 GET {{baseUrl}}/me
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 ### 1.4 Logout Kasir (Revoke Token)
 POST {{baseUrl}}/logout
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 
@@ -55,8 +52,8 @@ Authorization: Bearer {{cashierToken}}
 ### 2.1 Tambah Kategori Baru (Admin / Manager Only)
 # @name createCategory
 POST {{baseUrl}}/categories
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 {
@@ -68,14 +65,14 @@ Authorization: Bearer {{adminToken}}
 
 ### 2.2 List Semua Kategori
 GET {{baseUrl}}/categories
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 ### 2.3 Tambah Produk Baru (Admin / Manager Only)
 # @name createProduct
 POST {{baseUrl}}/products
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 {
@@ -94,22 +91,22 @@ Authorization: Bearer {{adminToken}}
 
 ### 2.4 Kasir Melihat Daftar Produk (Notice: cost_price disembunyikan dari kasir)
 GET {{baseUrl}}/products
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 ### 2.5 Admin Melihat Daftar Produk (Notice: cost_price terlihat)
 GET {{baseUrl}}/products
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 ### 2.6 Kasir Mencari Produk via Scanner Barcode atau Nama
 GET {{baseUrl}}/products?q=8991234567890
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 ### 2.7 Cek Produk dengan Stok Menipis (Low Stock Warning)
 GET {{baseUrl}}/products/low-stock
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 
@@ -119,8 +116,8 @@ Authorization: Bearer {{cashierToken}}
 
 ### 3.1 Restock Barang Masuk dari Supplier (Admin / Manager Only)
 POST {{baseUrl}}/products/1/stock-adjustments
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 {
@@ -131,8 +128,8 @@ Authorization: Bearer {{adminToken}}
 
 ### 3.2 Catat Barang Rusak / Pecah (Damage)
 POST {{baseUrl}}/products/1/stock-adjustments
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 {
@@ -143,19 +140,19 @@ Authorization: Bearer {{adminToken}}
 
 ### 3.3 Penyesuaian Stok Fisik / Stok Opname (Adjustment)
 POST {{baseUrl}}/products/1/stock-adjustments
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 {
     "type": "adjustment",
-    "quantity": 70,
+    "quantity": 160,
     "notes": "Hasil rekonsiliasi stok opname mingguan"
 }
 
 ### 3.4 Lihat Kartu Riwayat Mutasi Stok Produk (Stock Card Audit Trail)
 GET {{baseUrl}}/products/1/stock-movements
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 
@@ -166,8 +163,8 @@ Authorization: Bearer {{adminToken}}
 ### 4.1 Kasir Memproses Checkout Penjualan Multi-Item
 # @name checkoutOrder
 POST {{baseUrl}}/checkout
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 {
@@ -179,6 +176,10 @@ Authorization: Bearer {{cashierToken}}
         {
             "product_id": 1,
             "quantity": 2
+        },
+        {
+            "product_id": 2,
+            "quantity": 1
         }
     ]
 }
@@ -187,17 +188,17 @@ Authorization: Bearer {{cashierToken}}
 
 ### 4.2 Melihat Riwayat Transaksi Penjualan (Kasir & Admin)
 GET {{baseUrl}}/orders
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 ### 4.3 Filter Riwayat Transaksi Berdasarkan Status / Nomor Faktur
 GET {{baseUrl}}/orders?status=completed&invoice_number=INV
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 ### 4.4 Melihat Detail Satu Faktur Penjualan (Struk Kasir)
 GET {{baseUrl}}/orders/{{orderId}}
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 
@@ -207,8 +208,8 @@ Authorization: Bearer {{cashierToken}}
 
 ### 5.1 Kasir Memproses Pembayaran Tunai (Cash)
 POST {{baseUrl}}/orders/{{orderId}}/pay
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 {
@@ -218,8 +219,8 @@ Authorization: Bearer {{cashierToken}}
 
 ### 5.2 Kasir Memproses Pembayaran Non-Tunai (QRIS)
 POST {{baseUrl}}/orders/{{orderId}}/pay
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{cashierToken}}
 
 {
@@ -229,8 +230,8 @@ Authorization: Bearer {{cashierToken}}
 
 ### 5.3 Manager Membatalkan Pesanan (Void) & Mengembalikan Stok Otomatis
 POST {{baseUrl}}/orders/{{orderId}}/void
-Content-Type: {{contentType}}
-Accept: {{accept}}
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 {
@@ -244,15 +245,15 @@ Authorization: Bearer {{adminToken}}
 
 ### 6.1 Ringkasan Omzet, HPP, & Laba Kotor Toko Hari Ini
 GET {{baseUrl}}/reports/sales-summary
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 ### 6.2 Ringkasan Penjualan dengan Filter Rentang Tanggal
 GET {{baseUrl}}/reports/sales-summary?start_date=2026-11-01 00:00:00&end_date=2026-11-30 23:59:59
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{adminToken}}
 
 ### 6.3 Daftar Produk Terlaris (Top Selling Products)
 GET {{baseUrl}}/reports/top-products?limit=5
-Accept: {{accept}}
+Accept: application/json
 Authorization: Bearer {{adminToken}}
